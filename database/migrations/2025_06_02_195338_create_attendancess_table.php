@@ -17,7 +17,16 @@ return new class extends Migration
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');
             $table->date('date');
             $table->enum('status', ['present', 'absent', 'excused']);
+            $table->text('notes')->nullable();
             $table->timestamps();
+
+            // Index pour améliorer les performances des requêtes fréquentes
+            $table->index(['student_id', 'date']);
+            $table->index(['course_id', 'date']);
+            $table->index(['status']);
+
+            // Contrainte d'unicité pour éviter les doublons
+            $table->unique(['student_id', 'course_id', 'date']);
         });
     }
 

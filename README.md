@@ -193,3 +193,352 @@ The Laravel framework is open-sourced software licensed under the [MIT license](
     Application déployée en production,
     Formation des utilisateurs,
     Documentation technique.
+
+# Documentation de l'API - Système de Gestion des Facultés
+
+## Authentification
+
+### Login
+```http
+POST /api/login
+```
+**Body:**
+```json
+{
+    "email": "string",
+    "password": "string"
+}
+```
+
+### Register
+```http
+POST /api/register
+```
+**Body:**
+```json
+{
+    "name": "string",
+    "email": "string",
+    "password": "string",
+    "password_confirmation": "string",
+    "role_id": "integer"
+}
+```
+
+### Logout
+```http
+POST /api/logout
+```
+*Nécessite un token d'authentification*
+
+## Utilisateurs
+
+### Liste des utilisateurs
+```http
+GET /api/users
+```
+**Paramètres de requête:**
+- `search`: Recherche par nom ou email
+- `role_id`: Filtrer par rôle
+- `department_id`: Filtrer par département
+
+### Créer un utilisateur
+```http
+POST /api/users
+```
+**Body:**
+```json
+{
+    "name": "string",
+    "email": "string",
+    "password": "string",
+    "role_id": "integer",
+    "department_id": "integer"
+}
+```
+
+### Créer plusieurs utilisateurs
+```http
+POST /api/users/bulk
+```
+**Body:**
+```json
+{
+    "users": [
+        {
+            "name": "string",
+            "email": "string",
+            "password": "string",
+            "role_id": "integer",
+            "department_id": "integer"
+        }
+    ]
+}
+```
+
+## Cours
+
+### Liste des cours
+```http
+GET /api/courses
+```
+**Paramètres de requête:**
+- `search`: Recherche par titre ou description
+- `department_id`: Filtrer par département
+- `teacher_id`: Filtrer par enseignant
+- `academic_year_id`: Filtrer par année académique
+
+### Créer un cours
+```http
+POST /api/courses
+```
+**Body:**
+```json
+{
+    "title": "string",
+    "description": "string",
+    "department_id": "integer",
+    "teacher_id": "integer",
+    "academic_year_id": "integer",
+    "credits": "integer",
+    "max_students": "integer"
+}
+```
+
+## Inscriptions
+
+### Liste des inscriptions
+```http
+GET /api/enrollments
+```
+**Paramètres de requête:**
+- `student_id`: Filtrer par étudiant
+- `course_id`: Filtrer par cours
+- `status`: Filtrer par statut (pending, approved, rejected)
+
+### Créer une inscription
+```http
+POST /api/enrollments
+```
+**Body:**
+```json
+{
+    "student_id": "integer",
+    "course_id": "integer"
+}
+```
+
+### Approuver une inscription
+```http
+POST /api/enrollments/{id}/approve
+```
+
+### Rejeter une inscription
+```http
+POST /api/enrollments/{id}/reject
+```
+
+## Présences
+
+### Liste des présences
+```http
+GET /api/attendance
+```
+**Paramètres de requête:**
+- `student_id`: Filtrer par étudiant
+- `course_id`: Filtrer par cours
+- `date`: Filtrer par date
+- `status`: Filtrer par statut (present, absent, late)
+
+### Créer une présence
+```http
+POST /api/attendance
+```
+**Body:**
+```json
+{
+    "student_id": "integer",
+    "course_id": "integer",
+    "date": "date",
+    "status": "string"
+}
+```
+
+### Créer plusieurs présences
+```http
+POST /api/attendance/bulk
+```
+**Body:**
+```json
+{
+    "course_id": "integer",
+    "date": "date",
+    "attendance": [
+        {
+            "student_id": "integer",
+            "status": "string"
+        }
+    ]
+}
+```
+
+## Notes
+
+### Liste des notes
+```http
+GET /api/grades
+```
+**Paramètres de requête:**
+- `student_id`: Filtrer par étudiant
+- `course_id`: Filtrer par cours
+- `type`: Filtrer par type (exam, assignment, quiz, project)
+- `min_grade`: Note minimale
+- `max_grade`: Note maximale
+
+### Créer une note
+```http
+POST /api/grades
+```
+**Body:**
+```json
+{
+    "student_id": "integer",
+    "course_id": "integer",
+    "type": "string",
+    "grade": "numeric",
+    "comments": "string"
+}
+```
+
+### Créer plusieurs notes
+```http
+POST /api/grades/bulk
+```
+**Body:**
+```json
+{
+    "course_id": "integer",
+    "type": "string",
+    "grades": [
+        {
+            "student_id": "integer",
+            "grade": "numeric",
+            "comments": "string"
+        }
+    ]
+}
+```
+
+## Ressources
+
+### Liste des ressources
+```http
+GET /api/resources
+```
+**Paramètres de requête:**
+- `course_id`: Filtrer par cours
+- `type`: Filtrer par type (document, presentation, video, link)
+- `search`: Recherche par titre ou description
+
+### Créer une ressource
+```http
+POST /api/resources
+```
+**Body:**
+```json
+{
+    "course_id": "integer",
+    "title": "string",
+    "description": "string",
+    "type": "string",
+    "file": "file",
+    "url": "string"
+}
+```
+
+### Télécharger une ressource
+```http
+GET /api/resources/{id}/download
+```
+
+## Notifications
+
+### Liste des notifications
+```http
+GET /api/notifications
+```
+**Paramètres de requête:**
+- `user_id`: Filtrer par utilisateur
+- `type`: Filtrer par type (info, warning, success, error)
+- `is_read`: Filtrer par statut de lecture
+
+### Créer une notification
+```http
+POST /api/notifications
+```
+**Body:**
+```json
+{
+    "user_id": "integer",
+    "title": "string",
+    "message": "string",
+    "type": "string",
+    "link": "string"
+}
+```
+
+### Marquer comme lu
+```http
+POST /api/notifications/{id}/read
+```
+
+### Marquer comme non lu
+```http
+POST /api/notifications/{id}/unread
+```
+
+### Tout marquer comme lu
+```http
+POST /api/notifications/read-all
+```
+
+## Années Académiques
+
+### Liste des années académiques
+```http
+GET /api/academic-years
+```
+**Paramètres de requête:**
+- `search`: Recherche par nom ou description
+- `is_active`: Filtrer par statut actif
+
+### Créer une année académique
+```http
+POST /api/academic-years
+```
+**Body:**
+```json
+{
+    "name": "string",
+    "description": "string",
+    "start_date": "date",
+    "end_date": "date",
+    "is_active": "boolean"
+}
+```
+
+### Définir comme année active
+```http
+POST /api/academic-years/{id}/set-active
+```
+
+## Codes de réponse
+
+- `200` : Succès
+- `201` : Création réussie
+- `400` : Requête invalide
+- `401` : Non authentifié
+- `403` : Non autorisé
+- `404` : Ressource non trouvée
+- `422` : Erreur de validation
+- `500` : Erreur serveur

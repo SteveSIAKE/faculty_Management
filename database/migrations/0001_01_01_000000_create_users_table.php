@@ -16,9 +16,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
-            $table->string('phone')->nullable();
+            $table->string('phone', 20)->nullable();
             $table->string('password');
             $table->foreignId('role_id')->constrained('roles')->onDelete('cascade');
+            $table->foreignId('department_id')->nullable()->constrained()->onDelete('set null');
+            $table->enum('gender', ['male', 'female'])->nullable();
             $table->boolean('status')->default(true);
             $table->string('profile_picture')->nullable();
             $table->date('date_of_birth')->nullable();
@@ -30,7 +32,8 @@ return new class extends Migration
 
             // Index
             $table->index(['email', 'status']);
-            $table->index('role_id');
+            $table->index(['role_id', 'department_id']);
+            $table->index('gender');
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
